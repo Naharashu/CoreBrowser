@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="controls">
+        <button onclick="window.location.href='index.html'">Go to homepage</button>
+        <button onclick="clearHistory()">Clear history</button>
+    </div>
+
+    <div id="history-container"></div>
+
+    <script>
+        async function loadHistory() {
+            try {
+                const historyContainer = document.getElementById('history-container');
+                const history = await window.electronAPI.getHistory();
+                
+                if (history && history.length > 0) {
+                    const historyHTML = history.map(item => `
+                        <div class="history-item">
+                            <div class="history-url" onclick="loadURL('${item.url}')">
+                                ${item.url}
+                            </div>
+                            <div class="history-time">
+                                ${new Date(item.timestamp).toLocaleString()}
+                            </div>
+                        </div>
+                    `).join('');
+                    
+                    historyContainer.innerHTML = historyHTML;
+                } else {
+                    historyContainer.innerHTML = '<p class="no-history">Empty</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function clearHistory() {
+            try {
+                await window.electronAPI.clearHistory();
+                loadHistory();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function loadURL(url) {
+            window.electronAPI.loadURL(url);
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', loadHistory);
+        
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</body>
+</html>

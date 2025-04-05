@@ -1,0 +1,17 @@
+{
+  "name": "core",
+  "version": "1.0.0",
+  "main": "coreBrowser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Naharashu",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "electron": "^35.1.3"
+  },
+  "devDependencies": {
+    "electron-packager": "^17.1.2"
+  }
+}

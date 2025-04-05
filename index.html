@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Browser Beta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="controls">
+        <button id="back">Back</button>
+        <button id="forward">Forward</button>
+        <button id="refresh">Refresh</button>
+        <input type="text" id="url" placeholder="Enter URL" />
+        <button onclick="loadUrl()" id="go">Go</button>
+        <div class="dropdown">
+            <button class="dropbtn">•••</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="openSettings()">Settings</a>
+                <div class="separator"></div>
+                <a href="#" onclick="window.electronAPI.closeWindow()">Quit</a>
+            </div>
+        </div>
+        
+    </div>
+    <webview id="browser" allowpopups></webview>
+
+    <script>
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+        const browser = document.getElementById('browser');
+        const search_engine = localStorage.getItem('searchEngine') || 'google';
+        function loadUrl() {
+            let url = document.getElementById('url').value.trim();
+            if (!url) return;
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'http://' + url;
+            }
+            browser.loadURL(url);
+            window.electron.saveHistory(url);
+        }
+
+        function searchEng() {
+            if (search_engine === 'google') {
+                return 'https://www.google.com';
+            } else if (search_engine === 'wikipedia') {
+                return 'https://www.wikipedia.org';
+            } else if (search_engine === 'duckduckgo') {
+                return 'https://www.duckduckgo.com';
+            } else if (search_engine === 'bing') {
+                return 'https://www.bing.com';
+            } else if (search_engine === 'yahoo') {
+                return 'https://www.yahoo.com';
+            } else if (search_engine === 'baidu') {
+                return 'https://www.baidu.com';
+            } else {
+                return 'https://www.google.com'; 
+            } 
+        }
+
+        function goBack() {
+            if (browser.canGoBack()) {
+                browser.goBack();
+            }
+        }
+
+        function goForward() {
+            if (browser.canGoForward()) {
+                browser.goForward();
+            }
+        }
+
+        function refreshPage() {
+            browser.reload();
+        }
+
+        browser.addEventListener('did-navigate', (event) => {
+            document.getElementById('url').value = event.url;
+        });
+
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            localStorage.setItem('theme', themeName);
+        }
+
+        function openSettings() {
+            window.location.href = 'settings.html';
+        }
+
+
+
+        document.getElementById('back').addEventListener('click', goBack);
+        document.getElementById('forward').addEventListener('click', goForward);
+        document.getElementById('refresh').addEventListener('click', refreshPage);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            browser.setAttribute('src', searchEng());
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+        })
+    </script>
+    <footer>
+        <p>&copy; 2025 Core Browser</p>
+        <version>Version 1.1.0 Beta</version>
+    </footer>
+</body>
+
+</html>
